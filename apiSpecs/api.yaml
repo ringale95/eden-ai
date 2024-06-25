@@ -1,0 +1,250 @@
+openapi: 3.1.0
+info:
+  title: Simple Reddit API
+  version: 1.0.0
+  description: A simple version of Reddit.
+servers:
+  - url: https://api.simplereddits.com/v1
+paths:
+  /subreddits:
+    get:
+      summary: Get a list of all subreddits
+      responses:
+        '200':
+          description: A list of subreddits
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Subreddit'
+    post:
+      summary: Create a new subreddit
+      requestBody:
+        description: Subreddit object that needs to be added
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Subreddit'
+      responses:
+        '201':
+          description: Subreddit created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subreddit'
+               
+  /subreddits/{subredditId}/posts:
+    get:
+      summary: Get all posts in a subreddit
+      parameters:
+        - name: subredditId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of posts in the subreddit
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+    post:
+      summary: Submit a new post to a subreddit
+      parameters:
+        - name: subredditId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Post object that needs to be added
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Post'
+      responses:
+        '201':
+          description: Post created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+             
+  /posts/{postId}/upvote:
+    post:
+      summary: Upvote a post
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: User object that is upvoting the post
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Upvote'
+      responses:
+        '200':
+          description: Post upvoted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+             
+  /posts/{postId}/comments:
+    get:
+      summary: Get all comments on a post
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of comments on the post
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+    post:
+      summary: Add a comment to a post
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Comment object that needs to be added
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Comment'
+      responses:
+        '201':
+          description: Comment created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+               
+  /users/{userId}:
+    get:
+      summary: Get user profile
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+ 
+  /users/{userId}/subscriptions:
+    post:
+      summary: Subscribe a user to a subreddit
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Subscription object that needs to be added
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Subscription'
+      responses:
+        '201':
+          description: User subscribed to subreddit
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+               
+components:
+  schemas:
+    Subreddit:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+   
+    Post:
+      type: object
+      properties:
+        id:
+          type: string
+        subredditId:
+          type: string
+        title:
+          type: string
+        content:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        userId:
+          type: string
+   
+    Upvote:
+      type: object
+      properties:
+        postId:
+          type: string
+   
+    Comment:
+      type: object
+      properties:
+        id:
+          type: string
+        postId:
+          type: string
+        content:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+   
+    UserProfile:
+      type: object
+      properties:
+        userId:
+          type: string
+        subscribedSubreddits:
+          type: array
+          items:
+            type: string
+        receivedUpvotes:
+          type: integer
+   
+    Subscription:
+      type: object
+      properties:
+        subredditId:
+          type: string
+ 
